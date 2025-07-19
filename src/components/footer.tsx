@@ -11,11 +11,19 @@ export function Footer() {
           <span className="text-gray-600">Built with</span>
           <div className="flex items-center gap-1">
             <span className="text-gray-900 font-bold">Blastoff</span>
-            <img src="/logo.svg" alt="Blastoff" className="h-6 w-auto" />
+            <img
+              src="https://blastoff.org/a/logo"
+              alt="Blastoff"
+              className="h-6 w-auto"
+            />
           </div>
         </a>
         <div className="">
-          <img src="/logo.svg" alt="Blastoff" className="h-6 w-auto" />
+          <img
+            src="https://blastoff.org/a/logo"
+            alt="Blastoff"
+            className="h-6 w-auto"
+          />
         </div>
       </div>
     </div>
