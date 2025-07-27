@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 
 const API_URL = "https://app.blastoff.org/api/database/[PROJECT_ID]";
@@ -14,14 +14,21 @@ export function useStorage<TSchema extends FieldValues>(
   const [data, setData] = useState<TSchema[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  useEffect(() => {
+    fetchData();
+  }, [table]);
   async function fetchData() {
     setIsLoading(true);
     try {
       const response = await fetch(`${API_URL}/${table}`);
       const data = await response.json();
-      const parsedData = z.array(schema).parse(data);
-      setData(parsedData);
+      const parsedDataArray = data
+        .map((item: TSchema) => schema.safeParse(item))
+        .filter((item) => item.success)
+        .map((item) => item.data);
+      setData(parsedDataArray);
     } catch (error) {
+      console.error("Error fetching data", error);
       setError(error as Error);
     } finally {
       setIsLoading(false);
@@ -38,6 +45,7 @@ export function useStorage<TSchema extends FieldValues>(
       const parsedData = schema.parse(newData);
       setData((prev) => [...prev, parsedData]);
     } catch (error) {
+      console.error("Error creating data", error);
       setError(error as Error);
     } finally {
       setIsLoading(false);
@@ -56,6 +64,7 @@ export function useStorage<TSchema extends FieldValues>(
         prev.map((item) => (item.id === id ? parsedData : item))
       );
     } catch (error) {
+      console.error("Error updating data", error);
       setError(error as Error);
     } finally {
       setIsLoading(false);
@@ -69,6 +78,7 @@ export function useStorage<TSchema extends FieldValues>(
       });
       setData((prev) => prev.filter((item) => item.id !== id));
     } catch (error) {
+      console.error("Error deleting data", error);
       setError(error as Error);
     } finally {
       setIsLoading(false);
